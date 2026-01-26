@@ -7,7 +7,16 @@ use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\UserStatsController;
 use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\DuelController;
+use App\Http\Controllers\Api\TelegramBotController;
 use Illuminate\Support\Facades\Route;
+
+// Telegram Bot Webhook (public, no auth required)
+Route::prefix('telegram')->group(function () {
+    Route::post('/webhook', [TelegramBotController::class, 'webhook']);
+    Route::post('/set-webhook', [TelegramBotController::class, 'setWebhook']);
+    Route::get('/webhook-info', [TelegramBotController::class, 'getWebhookInfo']);
+    Route::post('/delete-webhook', [TelegramBotController::class, 'deleteWebhook']);
+});
 
 Route::prefix('auth')->group(function () {
     Route::post('/telegram', [AuthController::class, 'telegram']);
