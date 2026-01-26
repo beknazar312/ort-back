@@ -35,7 +35,7 @@ services:
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
-            - '${REVERB_PORT:-9797}:8080'
+            - '${REVERB_PORT:-9797}:9797'
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
