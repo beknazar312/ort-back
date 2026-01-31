@@ -18,6 +18,7 @@ class Subject extends Model
         'description',
         'sort_order',
         'is_active',
+        'question_time_seconds',
     ];
 
     protected function casts(): array
@@ -25,6 +26,7 @@ class Subject extends Model
         return [
             'is_active' => 'boolean',
             'sort_order' => 'integer',
+            'question_time_seconds' => 'integer',
         ];
     }
 
@@ -41,6 +43,11 @@ class Subject extends Model
     public function testAttempts(): HasMany
     {
         return $this->hasMany(TestAttempt::class);
+    }
+
+    public function marathonSessions(): HasMany
+    {
+        return $this->hasMany(MarathonSession::class);
     }
 
     public function scopeActive($query)

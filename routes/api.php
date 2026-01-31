@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\UserStatsController;
 use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\DuelController;
+use App\Http\Controllers\Api\MarathonController;
 use App\Http\Controllers\Api\TelegramBotController;
 use Illuminate\Support\Facades\Route;
 
@@ -75,5 +76,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{duel}/surrender', [DuelController::class, 'surrender']);
         Route::get('/{duel}/results', [DuelController::class, 'results']);
         Route::get('/stats/{opponentId}', [DuelController::class, 'stats']);
+    });
+
+    // Marathon
+    Route::prefix('marathon')->group(function () {
+        Route::post('/{slug}/start', [MarathonController::class, 'start']);
+        Route::get('/{session}/question', [MarathonController::class, 'getQuestion']);
+        Route::post('/{session}/answer', [MarathonController::class, 'submitAnswer']);
+        Route::post('/{session}/complete', [MarathonController::class, 'complete']);
+        Route::get('/{slug}/personal-best', [MarathonController::class, 'getPersonalBest']);
     });
 });
