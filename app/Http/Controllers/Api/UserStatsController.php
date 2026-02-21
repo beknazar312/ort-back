@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\TestAttempt;
+use App\Services\StreakService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserStatsController extends Controller
 {
+    public function __construct(
+        protected StreakService $streakService
+    ) {}
+
     public function stats(Request $request): JsonResponse
     {
         $user = $request->user();
@@ -31,7 +36,7 @@ class UserStatsController extends Controller
             : 0;
 
         // Calculate streak (consecutive days with practice)
-        $streak = $this->calculateStreak($user->id);
+        $streak = $this->streakService->calculateStreak($user->id);
 
         // Stats by subject
         $bySubject = TestAttempt::where('user_id', $user->id)
@@ -105,41 +110,5 @@ class UserStatsController extends Controller
                 'completed_at' => $attempt->completed_at->toISOString(),
             ]),
         ]);
-    }
-
-    private function calculateStreak(int $userId): int
-    {
-        $dates = TestAttempt::where('user_id', $userId)
-            ->completed()
-            ->selectRaw('DATE(completed_at) as date')
-            ->distinct()
-            ->orderBy('date', 'desc')
-            ->pluck('date')
-            ->map(fn ($d) => \Carbon\Carbon::parse($d));
-
-        if ($dates->isEmpty()) {
-            return 0;
-        }
-
-        $streak = 0;
-        $today = now()->startOfDay();
-        $checkDate = $today;
-
-        // Check if there's activity today or yesterday to count the streak
-        $firstDate = $dates->first();
-        if ($firstDate->diffInDays($today) > 1) {
-            return 0;
-        }
-
-        foreach ($dates as $date) {
-            if ($date->isSameDay($checkDate) || $date->isSameDay($checkDate->copy()->subDay())) {
-                $streak++;
-                $checkDate = $date;
-            } else {
-                break;
-            }
-        }
-
-        return $streak;
     }
 }

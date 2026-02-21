@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\ActivityCompleted;
 use App\Http\Controllers\Controller;
 use App\Models\MarathonSession;
 use App\Models\MarathonSessionAnswer;
@@ -169,6 +170,9 @@ class MarathonController extends Controller
                     'is_correct' => $sessionAnswer->is_correct,
                 ];
             });
+
+        // Dispatch activity completed event for streak milestone check
+        event(new ActivityCompleted($user, 'marathon'));
 
         return response()->json([
             'success' => true,

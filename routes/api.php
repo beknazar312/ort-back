@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\QuestionController;
 use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\UserStatsController;
+use App\Http\Controllers\Api\UserSettingsController;
 use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\DuelController;
 use App\Http\Controllers\Api\MarathonController;
@@ -51,6 +52,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // User statistics
     Route::get('/me/stats', [UserStatsController::class, 'stats']);
     Route::get('/me/test-history', [UserStatsController::class, 'testHistory']);
+
+    // User settings
+    Route::get('/me/settings', [UserSettingsController::class, 'show']);
+    Route::put('/me/settings', [UserSettingsController::class, 'update']);
 
     // Friends
     Route::prefix('friends')->group(function () {

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -48,6 +49,41 @@ class User extends Authenticatable
     public function testAttempts(): HasMany
     {
         return $this->hasMany(TestAttempt::class);
+    }
+
+    public function marathonSessions(): HasMany
+    {
+        return $this->hasMany(MarathonSession::class);
+    }
+
+    public function settings(): HasOne
+    {
+        return $this->hasOne(UserSetting::class);
+    }
+
+    public function notificationLogs(): HasMany
+    {
+        return $this->hasMany(NotificationLog::class);
+    }
+
+    public function getOrCreateSettings(): UserSetting
+    {
+        return $this->settings ?? $this->settings()->create([
+            'streak_notifications_enabled' => true,
+            'preferred_language' => $this->language_code ?? 'ru',
+        ]);
+    }
+
+    public function hasStreakNotificationsEnabled(): bool
+    {
+        $settings = $this->settings;
+        return $settings ? $settings->streak_notifications_enabled : true;
+    }
+
+    public function getPreferredLanguage(): string
+    {
+        $settings = $this->settings;
+        return $settings ? $settings->preferred_language : ($this->language_code ?? 'ru');
     }
 
     // Friendship relationships - outgoing friend requests
